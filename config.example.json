@@ -1,0 +1,22 @@
+{
+  "apiKey": "",
+  "apiKeys": [],
+  "model": "gemini-2.5-flash",
+  "temperature": 0.9,
+  "port": 3000,
+  "maxOutputTokens": 5000,
+  "autoMemory": true,
+  "proactiveModel": "gemini-2.5-flash",
+  "screenModel": "gemini-2.5-flash",
+  "memoryModel": "gemini-2.5-flash",
+  "chatApiKeys": [],
+  "screenApiKeys": [],
+  "proactiveApiKeys": [],
+  "provider": "gemini",
+  "openaiApiKey": "",
+  "openaiModel": "gpt-4o",
+  "openaiFallbackModels": [
+    "gpt-4.1",
+    "gpt-5.4-mini"
+  ]
+}

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>沈秣</title>
+
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#1f3a30" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="apple-touch-icon" href="/icon-192.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,500&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/theme-rococo.css" />
+</head>
+<body>
+<!-- PROACTIVE_ENTRY_START -->
+<a id="proactiveEntryBtn" href="/proactive.html">后台状态</a>
+<style>
+  #proactiveEntryBtn {
+    position: fixed;
+    right: 24px;
+    top: 210px;
+    z-index: 999999;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 78px;
+    height: 34px;
+    padding: 0 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(212, 166, 77, .9);
+    background: linear-gradient(135deg, #f7e3a5, #bd812d);
+    color: #1b1020;
+    font-size: 13px;
+    font-weight: 900;
+    text-decoration: none;
+    box-shadow: 0 8px 22px rgba(0,0,0,.38);
+    opacity: .94;
+  }
+</style>
+<!-- PROACTIVE_ENTRY_END -->
+
+  <div class="phone">
+    <header class="topbar">
+      <button class="back" aria-label="返回">‹</button>
+      <div class="who">
+        <div class="name">沈秣</div>
+        <div class="status"><span class="dot"></span>在线</div>
+      </div>
+      <div class="avatar topavatar">沈</div>
+      <a class="home-entry-btn" href="/home.html" title="小屋">小屋</a>
+    </header>
+
+    <main id="thread" class="thread"></main>
+
+    <footer class="composer">
+      <input id="input" type="text" placeholder="给沈先生发消息…" autocomplete="off" />
+      <button id="send" aria-label="发送">➤</button>
+    </footer>
+
+    <nav class="toolbar-icons">
+      <button class="tool-btn" data-tool="voice" aria-label="语音">
+        <span class="tool-icon">🎤</span>
+        <span class="tool-label">语音</span>
+      </button>
+      <button class="tool-btn" data-tool="camera" aria-label="拍照">
+        <span class="tool-icon">📷</span>
+        <span class="tool-label">拍照</span>
+      </button>
+      <button class="tool-btn" data-tool="image" aria-label="相册">
+        <span class="tool-icon">🖼️</span>
+        <span class="tool-label">相册</span>
+      </button>
+      <button class="tool-btn" data-tool="emoji" aria-label="表情">
+        <span class="tool-icon">😀</span>
+        <span class="tool-label">表情</span>
+      </button>
+      <a class="tool-btn" href="/home.html" data-tool="home" aria-label="小屋">
+        <span class="tool-icon">🏠</span>
+        <span class="tool-label">小屋</span>
+      </a>
+    </nav>
+  </div>
+
+  <script src="/app.js"></script>
+  <script src="/sidebar.js" defer></script>
+  <script src="/mode-switch.js" defer></script>
+  <script src="/banner.js" defer></script>
+<script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js").catch(() => {});
+    }
+    // 把底部 toolbar 图标点击 桥接到 composer 里的旧按钮
+    document.addEventListener("DOMContentLoaded", () => {
+      setTimeout(() => {
+        const findBtn = (selectors) => {
+          for (const s of selectors) {
+            const el = document.querySelector(s);
+            if (el) return el;
+          }
+          return null;
+        };
+        const oldCamera = findBtn([".composer .camera-btn", ".composer button[title='拍照']"]);
+        const oldPhoto = findBtn([".composer .photo-btn:not(.camera-btn)", ".composer button[title='发图']"]);
+        const cameraIcon = document.querySelector(".tool-btn[data-tool='camera']");
+        const imageIcon = document.querySelector(".tool-btn[data-tool='image']");
+        if (cameraIcon && oldCamera) cameraIcon.addEventListener("click", () => oldCamera.click());
+        if (imageIcon && oldPhoto) imageIcon.addEventListener("click", () => oldPhoto.click());
+      }, 500);
+    });
+  </script>
+
+
+
+
+
+
+
+
+</body>
+</html>

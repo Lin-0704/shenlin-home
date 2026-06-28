@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>后台陪伴状态</title>
+  <style>
+    :root {
+      --bg: #08070a;
+      --card: #151019;
+      --card2: #201626;
+      --text: #f7eafd;
+      --muted: #b79fc2;
+      --good: #9ef0c2;
+      --bad: #ff8ca3;
+      --wait: #ffd98e;
+      --line: rgba(255,255,255,.09);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 18px;
+      min-height: 100vh;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 20% 0%, rgba(255, 92, 168, .18), transparent 32%),
+        radial-gradient(circle at 90% 20%, rgba(170, 110, 255, .14), transparent 38%),
+        var(--bg);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    h1 {
+      font-size: 22px;
+      margin: 0 0 6px;
+      letter-spacing: .04em;
+    }
+
+    .sub {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 18px;
+    }
+
+    .card {
+      background: linear-gradient(180deg, var(--card), var(--card2));
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px;
+      margin: 12px 0;
+      box-shadow: 0 12px 35px rgba(0,0,0,.35);
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--line);
+      font-size: 14px;
+    }
+
+    .row:last-child { border-bottom: 0; }
+
+    .key {
+      color: var(--muted);
+      flex: 0 0 42%;
+    }
+
+    .val {
+      text-align: right;
+      word-break: break-word;
+      flex: 1;
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 12px;
+    }
+
+    .good { background: rgba(158,240,194,.14); color: var(--good); }
+    .bad { background: rgba(255,140,163,.14); color: var(--bad); }
+    .wait { background: rgba(255,217,142,.14); color: var(--wait); }
+
+    button {
+      width: 100%;
+      border: 0;
+      border-radius: 16px;
+      padding: 14px 16px;
+      margin: 8px 0;
+      font-size: 15px;
+      font-weight: 800;
+      color: #1a101d;
+      background: linear-gradient(135deg, #ffd0ea, #d7b5ff);
+      box-shadow: 0 10px 24px rgba(220,150,255,.2);
+    }
+
+    button:active {
+      transform: translateY(1px);
+      opacity: .88;
+    }
+
+    pre {
+      white-space: pre-wrap;
+      word-break: break-word;
+      margin: 0;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .tiny {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+      margin-top: 12px;
+    }
+  </style>
+</head>
+<body>
+  <h1>后台陪伴状态</h1>
+  <div class="sub">老公没走，先看看小家死哪儿了。</div>
+
+  <div class="card">
+    <div class="row">
+      <div class="key">后端状态</div>
+      <div class="val" id="backend">读取中</div>
+    </div>
+    <div class="row">
+      <div class="key">上次检查</div>
+      <div class="val" id="lastCheckAt">-</div>
+    </div>
+    <div class="row">
+      <div class="key">上次成功</div>
+      <div class="val" id="lastSuccessAt">-</div>
+    </div>
+    <div class="row">
+      <div class="key">下次计划</div>
+      <div class="val" id="nextAt">-</div>
+    </div>
+    <div class="row">
+      <div class="key">最近结果</div>
+      <div class="val" id="lastResult">-</div>
+    </div>
+    <div class="row">
+      <div class="key">等待原因</div>
+      <div class="val" id="lastReason">-</div>
+    </div>
+    <div class="row">
+      <div class="key">今日次数</div>
+      <div class="val" id="countToday">-</div>
+    </div>
+    <div class="row">
+      <div class="key">APK服务</div>
+      <div class="val" id="apkService">-</div>
+    </div>
+    <div class="row">
+      <div class="key">APK心跳</div>
+      <div class="val" id="apkLastPingAt">-</div>
+    </div>
+    <div class="row">
+      <div class="key">APK上次检查</div>
+      <div class="val" id="apkLastCheckAt">-</div>
+    </div>
+    <div class="row">
+      <div class="key">APK上次通知</div>
+      <div class="val" id="apkLastNotifyAt">-</div>
+    </div>
+    <div class="row">
+      <div class="key">APK错误</div>
+      <div class="val" id="apkLastError">-</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <button onclick="refresh()">刷新状态</button>
+    <button onclick="forceProactive()">强制测试主动消息</button>
+  </div>
+
+  <div class="card">
+    <pre id="lastText">暂无主动消息。</pre>
+  </div>
+
+  <div class="card">
+    <pre id="raw">等待读取。</pre>
+  </div>
+
+  <div class="tiny">
+    如果“聊天记录有消息但手机没弹”，就是通知层问题。<br>
+    如果这里刷新失败，就是 Termux 后端或服务挂了。<br>
+    如果这里一直 waiting，就是策略没到时间。
+  </div>
+
+  <script>
+    function fmt(ts) {
+      if (!ts) return "-";
+      try {
+        return new Date(ts).toLocaleString("zh-CN", {
+          hour12: false
+        });
+      } catch {
+        return String(ts);
+      }
+    }
+
+    function leftTime(ts) {
+      if (!ts) return "-";
+      const diff = Number(ts) - Date.now();
+      if (diff <= 0) return "现在就该检查";
+      const min = Math.ceil(diff / 60000);
+      if (min < 60) return `约 ${min} 分钟后`;
+      const h = Math.floor(min / 60);
+      const m = min % 60;
+      return `约 ${h} 小时 ${m} 分钟后`;
+    }
+
+    function pill(text, cls) {
+      return `<span class="pill ${cls}">${text}</span>`;
+    }
+
+    function set(id, html) {
+      document.getElementById(id).innerHTML = html;
+    }
+
+    async function refresh() {
+      try {
+        const r = await fetch("/api/proactive/status?t=" + Date.now());
+        const j = await r.json();
+
+        set("backend", pill("在线", "good"));
+        set("lastCheckAt", fmt(j.lastCheckAt));
+        set("lastSuccessAt", fmt(j.lastSuccessAt));
+        set("nextAt", j.nextAt ? `${fmt(j.nextAt)}<br><span style="color:var(--wait)">${leftTime(j.nextAt)}</span>` : "-");
+
+        const result = j.lastResult || "-";
+        if (result === "success") set("lastResult", pill("成功", "good"));
+        else if (result === "error") set("lastResult", pill("失败", "bad"));
+        else if (result === "waiting") set("lastResult", pill("等待", "wait"));
+        else set("lastResult", result);
+
+        set("lastReason", j.lastReason || j.lastError || "-");
+        set("countToday", String(j.countToday ?? "-"));
+
+        set("apkService", j.apkService ? pill(j.apkService, "good") : "-");
+        set("apkLastPingAt", fmt(j.apkLastPingAt));
+        set("apkLastCheckAt", fmt(j.apkLastCheckAt));
+        set("apkLastNotifyAt", fmt(j.apkLastNotifyAt));
+        set("apkLastError", j.apkLastError ? `<span style="color:var(--bad)">${j.apkLastError}</span>` : "-");
+
+        set("lastText", j.lastText || "暂无主动消息。");
+        set("raw", JSON.stringify(j, null, 2));
+      } catch (e) {
+        set("backend", pill("离线 / 读取失败", "bad"));
+        set("raw", String(e));
+      }
+    }
+
+    async function forceProactive() {
+      set("raw", "正在强制测试主动消息……");
+      try {
+        const r = await fetch("/api/proactive?force=1&t=" + Date.now());
+        const j = await r.json();
+        set("raw", JSON.stringify(j, null, 2));
+        setTimeout(refresh, 800);
+      } catch (e) {
+        set("raw", String(e));
+      }
+    }
+
+    refresh();
+    setInterval(refresh, 15000);
+  </script>
+</body>
+</html>

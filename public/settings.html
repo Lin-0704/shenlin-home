@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>沈秣的小屋设置</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div class="settings-page">
+    <header class="memory-header">
+      <a class="back-link" href="/">‹</a>
+      <div>
+        <h1>设置</h1>
+        <p>小屋运行参数，密钥不会显示</p>
+      </div>
+    </header>
+
+    <main class="settings-main">
+      <section class="settings-card">
+        <h2>模型</h2>
+
+        <label class="settings-field">
+          <span>Gemini model</span>
+          <input id="modelInput" placeholder="例如 gemini-2.5-flash" />
+        </label>
+
+        <label class="settings-field">
+          <span>temperature</span>
+          <input id="temperatureInput" type="number" min="0" max="2" step="0.05" />
+          <small>越低越稳，越高越发散。常用范围 0.7 - 1.1。</small>
+        </label>
+
+        <label class="settings-field">
+          <span>port</span>
+          <input id="portInput" type="number" min="1" max="65535" />
+          <small>改端口后需要重启小屋。</small>
+        </label>
+
+        <div class="settings-status">
+          <span>API key 状态：</span>
+          <strong id="apiKeyStatus">读取中...</strong>
+        </div>
+
+        <button id="saveSettingsBtn" class="settings-save">保存设置</button>
+
+        <p id="settingsMessage" class="settings-message"></p>
+      </section>
+
+      <section class="settings-card">
+        <h2>当前说明</h2>
+        <p>
+          第一版设置页不会显示、不会修改 API key。  
+          如果要更换密钥，仍然手动改 config.json。
+        </p>
+        <p>
+          保存 model、temperature、port 后，建议重启 server.js，避免运行中的配置没有完全刷新。
+        </p>
+      </section>
+    </main>
+  </div>
+
+  <script src="/settings.js"></script>
+</body>
+</html>

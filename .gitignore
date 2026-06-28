@@ -1,0 +1,33 @@
+# dependencies
+node_modules/
+
+# secrets / real config
+.env
+.env.*
+config.json
+config.json*
+!config.example.json
+
+# runtime/private data
+data/*
+!data/.gitkeep
+
+# logs
+*.log
+npm-debug.log*
+
+# backups
+*.bak
+*.bak*
+*.backup
+*.backup*
+*.old
+*.tmp
+*~
+
+# build outputs
+build/
+dist/
+
+# system
+.DS_Store

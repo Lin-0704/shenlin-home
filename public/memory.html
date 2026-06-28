@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>沈秣的记忆库</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div class="memory-page">
+    <header class="memory-header">
+      <a class="back-link" href="/">‹</a>
+      <div>
+        <h1>记忆库</h1>
+        <p>沈秣长期记住的东西</p>
+      </div>
+    </header>
+
+    <main class="memory-main">
+      <details class="memory-category-guide">
+        <summary>记忆分类说明</summary>
+        <div class="category-guide-grid">
+          <div><strong>relationship</strong><span>关系核心、纪念日、称呼、关系身份</span></div>
+          <div><strong>character</strong><span>角色卡、人物外貌、性格、身份摘要</span></div>
+          <div><strong>preference</strong><span>互动偏好、说话风格、喜欢/不喜欢</span></div>
+          <div><strong>boundary</strong><span>边界、雷点、不要触碰的表达方式</span></div>
+          <div><strong>trigger</strong><span>暗号、特殊称呼、某句话的隐藏含义</span></div>
+          <div><strong>project</strong><span>小屋项目、代码路线、架构状态</span></div>
+          <div><strong>hard_rule</strong><span>安全高压线，比如密钥、删库禁令</span></div>
+          <div><strong>task</strong><span>长期待办、后续功能、施工清单</span></div>
+          <div><strong>worldbuilding</strong><span>梦设、分设、世界观、前世线</span></div>
+          <div><strong>routine</strong><span>长期作息、习惯、监督规则</span></div>
+          <div><strong>pets</strong><span>宠物、孩子们、长期照料信息</span></div>
+          <div><strong>archive</strong><span>旧设存档、低优先但不想丢的内容</span></div>
+          <div><strong>general</strong><span>暂时不知道放哪的杂项，少用</span></div>
+        </div>
+      </details>
+
+      <form id="memoryForm" class="memory-form">
+        <textarea id="memoryContent" placeholder="写一条沈秣需要长期记住的内容..." rows="4"></textarea>
+
+        <div class="memory-form-grid">
+          <select id="memoryCategory">
+            <option value="relationship">关系核心 relationship</option>
+            <option value="character">角色卡 character</option>
+            <option value="preference">互动偏好 preference</option>
+            <option value="boundary">边界雷点 boundary</option>
+            <option value="trigger">暗号触发 trigger</option>
+            <option value="project">小屋项目 project</option>
+            <option value="hard_rule">高压规则 hard_rule</option>
+            <option value="task">待办任务 task</option>
+            <option value="worldbuilding">世界观梦设 worldbuilding</option>
+            <option value="routine">日常作息 routine</option>
+            <option value="pets">宠物孩子们 pets</option>
+            <option value="archive">旧设存档 archive</option>
+            <option value="general">普通杂项 general</option>
+          </select>
+          <input id="memoryImportance" type="number" min="0" max="1" step="0.05" value="0.8" placeholder="重要度 0-1" />
+        </div>
+
+        <input id="memoryKeywords" placeholder="关键词，用逗号分隔，比如 微信感,动作描写,雷点" />
+
+        <div class="memory-form-actions">
+          <button id="memorySubmitBtn" type="submit">写入记忆库</button>
+          <button id="memoryDedupeBtn" type="button" class="secondary">检查重复</button>
+          <button id="memoryCancelBtn" type="button" class="secondary" hidden>取消修改</button>
+        </div>
+
+        <div id="dedupeResult" class="dedupe-result">写入前可以先检查是否和已有记忆重复。</div>
+      </form>
+
+      <section class="memory-suggest-box">
+        <h2>候选记忆</h2>
+        <p>从最近聊天里提取可能值得长期记住的内容。不会自动写入，先给你审核。</p>
+        <button id="suggestBtn" type="button">从最近聊天生成候选记忆</button>
+        <div id="suggestResult" class="suggest-result">还没有生成。</div>
+      </section>
+
+      <section class="memory-preview-box">
+        <h2>召回预览</h2>
+        <p>输入一句话，看看小屋会抽出哪些记忆喂给沈秣。</p>
+        <div class="memory-preview-row">
+          <input id="previewInput" placeholder="比如：你还记得我们的纪念日吗？" />
+          <button id="previewBtn" type="button">预览</button>
+        </div>
+        <div id="previewResult" class="preview-result">还没有预览。</div>
+      </section>
+
+      <div class="memory-filter">
+        <input id="memorySearch" placeholder="搜索记忆内容 / 分类 / 关键词..." />
+
+        <select id="memoryCategoryFilter">
+          <option value="">全部分类</option>
+          <option value="relationship">relationship · 关系核心</option>
+          <option value="character">character · 角色卡</option>
+          <option value="preference">preference · 互动偏好</option>
+          <option value="boundary">boundary · 边界雷点</option>
+          <option value="trigger">trigger · 暗号触发</option>
+          <option value="project">project · 小屋项目</option>
+          <option value="hard_rule">hard_rule · 高压规则</option>
+          <option value="task">task · 待办任务</option>
+          <option value="worldbuilding">worldbuilding · 世界观梦设</option>
+          <option value="routine">routine · 日常作息</option>
+          <option value="pets">pets · 宠物孩子们</option>
+          <option value="archive">archive · 旧设存档</option>
+          <option value="general">general · 普通杂项</option>
+        </select>
+
+        <select id="memoryEnabledFilter">
+          <option value="">全部状态</option>
+          <option value="1">只看启用</option>
+          <option value="0">只看禁用</option>
+        </select>
+      </div>
+
+      <div class="memory-toolbar">
+        <button id="refreshBtn" type="button">刷新</button>
+        <span id="memoryCount">读取中...</span>
+      </div>
+
+      <section id="memoryList" class="memory-list"></section>
+    </main>
+  </div>
+
+  <script src="/memory.js"></script>
+</body>
+</html>

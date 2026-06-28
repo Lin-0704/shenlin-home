@@ -1,0 +1,129 @@
+
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>沈秣 · 隐私白名单</title>
+<style>
+  :root {
+    --bg: #1f3a30;
+    --bg-deep: #16291f;
+    --gold: #d4af5a;
+    --gold-soft: #b89148;
+    --cream: #f4ead5;
+    --red: #a04545;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body { margin: 0; background: var(--bg); color: var(--cream); font-family: "Noto Serif SC", "PingFang SC", serif; font-size: 14px; line-height: 1.6; min-height: 100vh; padding-bottom: 80px; }
+  header { background: linear-gradient(180deg, rgba(45,74,62,0.95), rgba(31,58,48,0.98)); border-bottom: 1px solid var(--gold-soft); padding: 14px 16px; position: sticky; top: 0; z-index: 10; }
+  h1 { margin: 0 0 4px; font-size: 18px; color: var(--gold); font-weight: 600; letter-spacing: 1.5px; }
+  .subtitle { color: rgba(244,234,213,0.7); font-size: 12px; }
+  .section { margin: 16px 12px; background: rgba(0,0,0,0.2); border: 1px solid var(--gold-soft); border-radius: 12px; padding: 12px 14px; }
+  .section h2 { margin: 0 0 10px; font-size: 15px; color: var(--gold); display: flex; align-items: center; gap: 6px; }
+  .section .hint { font-size: 11px; color: rgba(244,234,213,0.5); margin-bottom: 10px; line-height: 1.4; }
+  .add-row { display: flex; gap: 6px; margin-bottom: 12px; }
+  .add-row input { flex: 1; background: rgba(244,234,213,0.95); color: #3a2e1a; border: 1px solid var(--gold-soft); border-radius: 8px; padding: 6px 10px; font-size: 13px; font-family: inherit; }
+  .add-row button { flex-shrink: 0; background: linear-gradient(135deg, var(--gold), #8a6a2e); color: var(--bg); border: 1px solid var(--gold); border-radius: 8px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer; }
+  ul { list-style: none; padding: 0; margin: 0; }
+  li { display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; margin-bottom: 4px; background: rgba(212,175,90,0.08); border: 1px solid rgba(212,175,90,0.25); border-radius: 8px; font-size: 13px; }
+  li .name { flex: 1; overflow: hidden; text-overflow: ellipsis; color: var(--cream); font-family: monospace; font-size: 12px; }
+  li .del { background: transparent; color: var(--red); border: 1px solid var(--red); border-radius: 12px; padding: 2px 10px; font-size: 11px; cursor: pointer; flex-shrink: 0; margin-left: 8px; }
+  .recent { background: rgba(0,0,0,0.3); border-radius: 6px; padding: 8px 10px; margin-top: 6px; font-size: 12px; max-height: 200px; overflow-y: auto; }
+  .recent .item { padding: 4px 0; border-bottom: 1px dashed rgba(212,175,90,0.15); color: rgba(244,234,213,0.85); }
+  .recent .item:last-child { border-bottom: none; }
+  .recent .item .pkg { font-family: monospace; font-size: 10px; color: var(--gold-soft); }
+  .empty { text-align: center; color: rgba(244,234,213,0.4); padding: 12px; font-style: italic; font-size: 12px; }
+  .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--bg-deep); color: var(--gold); border: 1px solid var(--gold); padding: 8px 16px; border-radius: 20px; font-size: 13px; z-index: 100; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+  .toast.show { opacity: 1; }
+  a.back-link { color: var(--gold); text-decoration: none; font-size: 13px; display: inline-block; margin-bottom: 4px; }
+</style>
+</head>
+<body>
+<header>
+  <a class="back-link" href="/">‹ 回沈秣</a>
+  <h1>🔒 隐私白名单</h1>
+  <div class="subtitle">沈秣看到这些 App 时会自动闭眼</div>
+</header>
+<div class="section">
+  <h2>📦 App 包名（完全匹配）</h2>
+  <div class="hint">沈秣在这些 App 时一秒钟都不会偷看。包名格式如 com.tencent.mm。</div>
+  <div class="add-row">
+    <input id="pkg-input" placeholder="com.example.app">
+    <button onclick="addItem('package')">添加</button>
+  </div>
+  <ul id="pkg-list"></ul>
+</div>
+<div class="section">
+  <h2>🏷️ 关键词（模糊匹配）</h2>
+  <div class="hint">包名包含这些词就拦。比如加"pay"，所有带 pay 的 App 都被屏蔽。</div>
+  <div class="add-row">
+    <input id="kw-input" placeholder="pay / bank / wallet">
+    <button onclick="addItem('keyword')">添加</button>
+  </div>
+  <ul id="kw-list"></ul>
+</div>
+<div class="section">
+  <h2>👀 沈秣最近看到的</h2>
+  <div class="hint">最新 10 条记录。也可以从这里看到他正在看哪个 App，方便加白名单。</div>
+  <div class="recent" id="recent-list"><div class="empty">还没有记录</div></div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const $ = (s) => document.querySelector(s);
+let currentWhitelist = { packages: [], keywords: [] };
+function showToast(msg) { const t = $("#toast"); t.textContent = msg; t.classList.add("show"); setTimeout(() => t.classList.remove("show"), 1800); }
+async function loadWhitelist() {
+  try {
+    const r = await fetch("/api/screen-whitelist");
+    currentWhitelist = await r.json();
+    renderList("package", currentWhitelist.packages || []);
+    renderList("keyword", currentWhitelist.keywords || []);
+  } catch (e) { showToast("加载失败：" + e.message); }
+}
+function renderList(type, items) {
+  const ul = $(type === "package" ? "#pkg-list" : "#kw-list");
+  if (!items.length) { ul.innerHTML = '<div class="empty">还没添加</div>'; return; }
+  ul.innerHTML = items.map(v => `<li><span class="name">${escapeHtml(v)}</span><button class="del" onclick="removeItem('${type}', '${escapeAttr(v)}')">删除</button></li>`).join("");
+}
+function escapeHtml(s) { return String(s).replace(/[&<>"']/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m])); }
+function escapeAttr(s) { return String(s).replace(/'/g, "\\'").replace(/"/g, "&quot;"); }
+async function addItem(type) {
+  const input = $(type === "package" ? "#pkg-input" : "#kw-input");
+  const val = input.value.trim();
+  if (!val) { showToast("不能为空"); return; }
+  try {
+    const r = await fetch("/api/screen-whitelist", { method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({ action: "add", value: val, type: type === "keyword" ? "keyword" : "package" }) });
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    input.value = "";
+    showToast("已添加 ✓");
+    await loadWhitelist();
+  } catch (e) { showToast("失败：" + e.message); }
+}
+async function removeItem(type, val) {
+  if (!confirm(`确定移除 ${val} 吗？`)) return;
+  try {
+    const r = await fetch("/api/screen-whitelist", { method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({ action: "remove", value: val, type: type === "keyword" ? "keyword" : "package" }) });
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    showToast("已移除 ✓");
+    await loadWhitelist();
+  } catch (e) { showToast("失败：" + e.message); }
+}
+async function loadRecent() {
+  try {
+    const r = await fetch("/api/screen-feed/recent?n=10");
+    const list = await r.json();
+    const el = $("#recent-list");
+    if (!list.length) { el.innerHTML = '<div class="empty">沈秣还没看到任何东西</div>'; return; }
+    el.innerHTML = list.reverse().map(item => {
+      const dt = new Date(item.ts).toLocaleString("zh-CN", { hour12: false });
+      return `<div class="item"><div>${escapeHtml(item.desc || "")}</div><div class="pkg">${escapeHtml(dt)} · ${escapeHtml(item.pkg || "?")}</div></div>`;
+    }).join("");
+  } catch (e) {}
+}
+loadWhitelist();
+loadRecent();
+setInterval(loadRecent, 10000);
+</script>
+</body>
+</html>

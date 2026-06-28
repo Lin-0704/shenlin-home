@@ -1,0 +1,12 @@
+{
+  "name": "shenmo-chat",
+  "version": "0.1.0",
+  "description": "沈先生的家 - 第一间房：核心聊天",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}

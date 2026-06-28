@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>沈秣的小屋备份</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div class="settings-page">
+    <header class="memory-header">
+      <a class="back-link" href="/">‹</a>
+      <div>
+        <h1>备份</h1>
+        <p>导出小屋数据，不导出密钥</p>
+      </div>
+    </header>
+
+    <main class="settings-main">
+      <section class="settings-card">
+        <h2>当前数据</h2>
+        <div id="backupInfo" class="backup-info">读取中...</div>
+        <button id="refreshBackupBtn" class="settings-save" type="button">刷新状态</button>
+      </section>
+
+      <section class="settings-card">
+        <h2>导出</h2>
+        <div class="backup-actions">
+          <a href="/api/backup/messages" download>导出聊天记录 messages.json</a>
+          <a href="/api/backup/memory-db" download>导出记忆库 memory.db</a>
+          <a href="/api/backup/persona" download>导出人设 persona.js</a>
+        </div>
+        <p class="backup-note">
+          config.json 不会从这里导出，因为里面可能有 Gemini API key。
+        </p>
+      </section>
+
+      <section class="settings-card">
+        <h2>说明</h2>
+        <p>
+          第一版只做导出，不做恢复。恢复功能以后再加，避免误覆盖当前小屋数据。
+        </p>
+      </section>
+    </main>
+  </div>
+
+  <script src="/backup.js"></script>
+</body>
+</html>

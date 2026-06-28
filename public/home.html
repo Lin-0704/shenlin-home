@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>沈秣的小屋</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div class="home-page">
+    <header class="home-hero">
+      <div class="home-mark">沈</div>
+      <div>
+        <h1>沈秣的小屋</h1>
+        <p>聊天、记忆、设置和备份，都放在这里。</p>
+      </div>
+    </header>
+
+    <main class="home-main">
+      <section class="home-status-card">
+        <h2>小屋状态</h2>
+        <div id="homeStatus" class="home-status">读取中...</div>
+      </section>
+
+      <section class="home-grid">
+        <a class="home-card" href="/">
+          <strong>聊天</strong>
+          <span>回到沈秣身边</span>
+        </a>
+
+        <a class="home-card" href="/memory.html">
+          <strong>记忆库</strong>
+          <span>查看、修改、整理长期记忆</span>
+        </a>
+
+        <a class="home-card" href="/settings.html">
+          <strong>设置</strong>
+          <span>模型、温度和运行参数</span>
+        </a>
+
+        <a class="home-card" href="/backup.html">
+          <strong>备份</strong>
+          <span>导出聊天、人设和记忆库</span>
+        </a>
+      </section>
+
+      <section class="home-note">
+        <h2>当前路线</h2>
+        <p>
+          小屋现在已经有聊天页、SQLite 长期记忆库、记忆面板、设置页和备份页。
+          后续会继续接自动总结、embedding 召回，再逐步长成真正的 App。
+        </p>
+      </section>
+    </main>
+  </div>
+
+  <script src="/home.js"></script>
+</body>
+</html>
